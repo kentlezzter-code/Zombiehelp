@@ -1,0 +1,107 @@
+
+-- ZombieHelper.lua
+-- Call of Mini: Zombies 2 [BETA]
+-- Standalone mobile GUI
+-- Combat features are UI placeholders.
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local previous = playerGui:FindFirstChild("ZombieHelper")
+if previous then
+    previous:Destroy()
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "ZombieHelper"
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
+gui.Parent = playerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.fromOffset(250, 265)
+frame.Position = UDim2.new(0, 20, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 32)
+frame.Active = true
+frame.Parent = gui
+
+Instance.new("UICorner", frame).CornerRadius =
+    UDim.new(0, 12)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 0, 40)
+title.Position = UDim2.fromOffset(10, 0)
+title.BackgroundTransparency = 1
+title.Text = "ZOMBIE HELPER"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 17
+title.Parent = frame
+
+local close = Instance.new("TextButton")
+close.Size = UDim2.fromOffset(30, 30)
+close.Position = UDim2.new(1, -35, 0, 5)
+close.Text = "X"
+close.TextColor3 = Color3.new(1, 1, 1)
+close.BackgroundColor3 = Color3.fromRGB(160, 45, 45)
+close.Parent = frame
+
+close.Activated:Connect(function()
+    gui:Destroy()
+end)
+
+local states = {
+    ["Auto Farm"] = false,
+    ["God Mode"] = false,
+    ["Fast Boss Kill"] = false
+}
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1, -20, 0, 35)
+status.Position = UDim2.fromOffset(10, 220)
+status.BackgroundTransparency = 1
+status.Text = "Ready"
+status.TextColor3 = Color3.fromRGB(210, 210, 210)
+status.TextSize = 12
+status.Parent = frame
+
+local function addToggle(name, y)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, -20, 0, 42)
+    button.Position = UDim2.fromOffset(10, y)
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.Font = Enum.Font.Gotham
+    button.TextSize = 14
+    button.Parent = frame
+
+    Instance.new("UICorner", button).CornerRadius =
+        UDim.new(0, 8)
+
+    local function refresh()
+        button.Text = name .. ": " ..
+            (states[name] and "ON" or "OFF")
+
+        button.BackgroundColor3 = states[name]
+            and Color3.fromRGB(35, 135, 75)
+            or Color3.fromRGB(65, 65, 78)
+    end
+
+    button.Activated:Connect(function()
+        states[name] = not states[name]
+        refresh()
+        status.Text = name .. (states[name]
+            and " enabled (UI only)"
+            or " disabled")
+
+        print("[Zombie Helper] " .. status.Text)
+    end)
+
+    refresh()
+end
+
+addToggle("Auto Farm", 45)
+addToggle("God Mode", 91)
+addToggle("Fast Boss Kill", 137)
+
+print("[Zombie Helper] Loaded successfully.")
